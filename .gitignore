@@ -1,0 +1,8 @@
+.DS_Store
+contones/static/node_modules
+contones/static/bower_components
+*.pyc
+*.tiff
+*.tif
+.ipynb_checkpoints
+*.ipynb

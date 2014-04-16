@@ -1,0 +1,16 @@
+<h4>{{filename}}</h4>
+
+<ul class="button-group">
+  <li ng-click="onBand(0)"><a href="#" class="tiny button">Color</a></li>
+  <li ng-repeat="bandIndex in bands" ng-click="onBand(bandIndex)"><a href="#" class="tiny button">{{bandIndex}}</a></li>
+</ul>
+
+<div class="row">
+  <div class="large-10 columns">
+    <canvas class="raster"></canvas>
+  </div>
+  
+  <div class="large-2 columns">
+    <div class="histogram"></div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+{
+  "name": "contones",
+  "version": "0.0.0",
+  "dependencies": {
+    "foundation": "zurb/bower-foundation#~5.0.2",
+    "angular": "1.2.x",
+    "angular-route": "1.2.x",
+    "angular-foundation": "0.1.x",
+    "lodash": "2.4.x",
+    "d3": "3.3.x",
+    "rawimage.js": "0.5.x"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.2.x",
+    "angular-scenario": "1.2.x"
+  }
+}

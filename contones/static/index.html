@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Mapbox Contones</title>
+
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+
+<link rel="stylesheet" type="text/css" href="static/main.css" />
+<link rel="stylesheet" type="text/css" href="static/bower_components/foundation/css/foundation.css" />
+
+<script type="text/javascript" src="static/bower_components/d3/d3.js"></script>
+<script type="text/javascript" src="static/bower_components/angular/angular.js"></script>
+<script type="text/javascript" src="static/bower_components/angular-route/angular-route.js"></script>
+<script type="text/javascript" src="static/bower_components/angular-foundation/mm-foundation-tpls.js"></script>
+
+<script type="text/javascript" src="static/app.js"></script>
+<script type="text/javascript" src="static/service/api.js"></script>
+<script type="text/javascript" src="static/controller/main.js"></script>
+<script type="text/javascript" src="static/controller/contone.js"></script>
+<script type="text/javascript" src="static/directive/raster.js"></script>
+<script type="text/javascript" src="static/filter/getBasename.js"></script>
+
+</head>
+<body ng-app="ContoneApp">
+
+<div class="row">
+  <div class="large-12 columns">
+    <h4>Mapbox Contone</h4>
+    <div ng-view></div>
+  </div>
+</div>
+
+</body>
+</html>

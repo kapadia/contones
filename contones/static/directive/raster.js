@@ -22,15 +22,22 @@
             
             var deferred = $q.defer();
             deferred.promise.then(updateImage);
-            Api.getRaster(deferred, scope.filename, scope.bandIndex);
+            Api.getRaster(deferred, scope.filename, scope.bandIndex, 0, 65535);
           });
           
           scope.$watch('bandIndex', function(bandIndex) {
             
             var deferred = $q.defer();
             deferred.promise.then(updateImage);
-            Api.getRaster(deferred, scope.filename, scope.bandIndex);
+            Api.getRaster(deferred, scope.filename, scope.bandIndex, 0, 65535);
           });
+          
+          scope.$on("getImageScaled", function(obj, extent) {
+            
+            var deferred = $q.defer();
+            deferred.promise.then(updateImage);
+            Api.getRaster(deferred, scope.filename, scope.bandIndex, extent[0], extent[1]);
+          })
         }
       }
       

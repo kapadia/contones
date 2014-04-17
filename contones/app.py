@@ -75,8 +75,11 @@ def get_color(filename):
     return send_file(output, mimetype='image/png')
 
 
-@app.route('/raster/<string:filename>/<int:band_index>', methods=['GET'])
-def get_raster(filename, band_index):
+@app.route('/raster/<string:filename>/<int:band_index>/<float:minimum>/<float:maximum>', methods=['GET'])
+@app.route('/raster/<string:filename>/<int:band_index>/<int:minimum>/<int:maximum>', methods=['GET'])
+@app.route('/raster/<string:filename>/<int:band_index>/<int:minimum>/<float:maximum>', methods=['GET'])
+@app.route('/raster/<string:filename>/<int:band_index>/<float:minimum>/<int:maximum>', methods=['GET'])
+def get_raster(filename, band_index, minimum, maximum):
     """
     Get a single band image.
 
@@ -101,8 +104,6 @@ def get_raster(filename, band_index):
             band = src.read_band(band_index)
 
     band = ndimage.interpolation.zoom(band, 0.20)
-    minimum = band.min()
-    maximum = band.max()
     output = scale_image(band, minimum, maximum)
 
     return send_file(output, mimetype='image/png')
@@ -126,13 +127,13 @@ def get_histogram(filename, band_index):
     
     arr = band.flatten()
     
-    # Using the Freedman-Diaconis rule for number of bins
+    # Using the modified Freedman-Diaconis rule for number of bins
     iqr = scoreatpercentile(arr, 75) - scoreatpercentile(arr, 25)
-    bins = 2 * iqr / np.power(arr.size, 0.333)
+    bins = 4 * iqr / np.power(arr.size, 0.333)
     
     histogram, bin_edges = np.histogram(arr, bins=bins)
     obj = {
-        "hist": histogram.tolist(),
+        "counts": histogram.tolist(),
         "bin_edges": bin_edges.tolist()
     }
     

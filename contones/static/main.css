@@ -1,5 +1,10 @@
-/*
-html, body {
-  background-color: #FAFAFA;
-  color: #505050;
-}*/
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.brush {
+  fill: #0071e5;
+  fill-opacity: 0.5;
+}

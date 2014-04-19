@@ -2,16 +2,55 @@
   'use strict';
   
   angular.module('ContoneApp')
-    .controller('MainCtrl', function($scope, $q, Api) {
+    .controller('MainCtrl', function($scope, $q, $location, Api) {
       console.log('MainCtrl');
-    
+      
+      $scope.relpath = [];
+      
       // Get a list of files from the API
       var deferred = $q.defer();
       deferred.promise.then(function(data) {
         $scope.files = data;
-      })
-    
-      Api.getFiles(deferred);
+      });
+      Api.getFiles(deferred, '');
+      
+      $scope.onFile = function(file) {
+        
+        $scope.relpath = file.path.split('/');
+        
+        if (file.isDir) {
+          
+          // Navigate to next directory
+          var deferred = $q.defer();
+          deferred.promise.then(function(data) {
+            $scope.files = data;
+          });
+          Api.getFiles(deferred, file.path);
+          
+        } else {
+          
+          // Render image
+          var path = file.path.split('.')[0];
+          var route = ['/contone', path, '1'].join('/');
+          $location.path(route);
+          
+        }
+      }
+      
+      $scope.onParent = function() {
+        var index = $scope.relpath.length - 2;
+        
+        $scope.relpath = $scope.relpath.filter(function(d, i) {
+          if (i <= index) { return true; }
+        });
+        
+        var deferred = $q.defer();
+        deferred.promise.then(function(data) {
+          $scope.files = data;
+        });
+        Api.getFiles(deferred, $scope.relpath.join('/'));
+        
+      }
   
     });
 

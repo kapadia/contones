@@ -7,8 +7,11 @@
       
       var api = {};
       
-      api.getFiles = function(deferred) {
-        $http.get('/rasters')
+      
+      api.getFiles = function(deferred, path) {
+        var url = ['', 'directory', path];
+        
+        $http.get(url.join('/'))
           .success(function(data, status, headers, config) {
             api.files = data;
             deferred.resolve(data);

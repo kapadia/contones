@@ -2,7 +2,7 @@
   'use strict';
   
   angular.module('ContoneApp')
-    .directive('histogram', function($rootScope, $q, Api) {
+    .directive('histogram', function($rootScope, $q, Api, debounce) {
       
       return {
         restrict: 'C',
@@ -85,7 +85,7 @@
               .attr('class', 'brush')
               .call(d3.svg.brush().x(x)
                 .on('brushend', function() {
-                  $rootScope.$broadcast("getImageScaled", d3.event.target.extent());
+                  $rootScope.$broadcast("getImageScaled", d3.event.target.extent());  
                 })
               )
               .selectAll('rect')

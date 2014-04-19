@@ -22,6 +22,9 @@ static_path = os.path.join(root_dir, 'static')
 app = Flask('contones', static_path=static_path)
 DATA_DIR = None
 
+#
+#   Static Content
+#
 
 @app.route('/', methods=['GET'])
 def index():
@@ -31,6 +34,50 @@ def index():
 @app.route('/static/<path:fpath>', methods=['GET'])
 def get_static(fpath):
     return send_file(url_for("static", filename=fpath))
+
+
+#
+#   Filesystem
+#
+
+@app.route('/directory/', methods=['GET'], defaults={'relpath': ''})
+@app.route('/directory/<path:relpath>', methods=['GET'])
+def get_directory(relpath):
+    """
+    List contents of a directory. Filter files except for tiffs.
+    The path argument is relative to the DATA_DIR path.
+    """
+    abspath = os.path.join(DATA_DIR, relpath)
+    if not os.path.exists(abspath):
+        return jsonify({'error': 'Path does not exist'})
+    
+    items = os.listdir(abspath)
+    
+    def format_items(item):
+        item_abspath = os.path.join(abspath, item)
+        return {
+            'path': os.path.join(relpath, item),
+            'isDir': os.path.isdir(item_abspath)
+        }
+    
+    def filter_items(item):
+        
+        # Check for hidden files
+        if item['path'].startswith('.'):
+            return False
+        
+        # Check extension and directories
+        ext = os.path.splitext(item['path'])[1]
+        if (ext in ['.tif', '.tiff']) or (item['isDir']):
+            return True
+        
+        return False
+    
+    items = map(format_items, items)
+    items = filter(filter_items, items)
+    print items
+    
+    return json.dumps(items)
 
 
 @app.route('/rasters', methods=['GET'])
@@ -129,7 +176,7 @@ def get_histogram(filename, band_index):
     
     # Using the modified Freedman-Diaconis rule for number of bins
     iqr = scoreatpercentile(arr, 75) - scoreatpercentile(arr, 25)
-    bins = 4 * iqr / np.power(arr.size, 0.333)
+    bins = 8 * iqr / np.power(arr.size, 0.333)
     
     histogram, bin_edges = np.histogram(arr, bins=bins)
     obj = {

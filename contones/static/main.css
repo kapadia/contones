@@ -8,3 +8,11 @@
   fill: #0071e5;
   fill-opacity: 0.5;
 }
+
+.directory:after {
+  content: "/";
+}
+
+.file {
+  cursor: pointer;
+}

@@ -10,7 +10,8 @@
       
         var s = path.split('/')
         var basename = s[s.length - 1];
-        return basename.split('.')[0];
+        
+        return basename;
       };
     });
 

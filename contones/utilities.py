@@ -24,6 +24,7 @@ def scale_image(arr, minimum, maximum):
     """Scale an array to uint8"""
     
     extent = float(maximum - minimum)
+    arr = np.clip(arr, minimum, maximum)
     
     arr = (arr - minimum) / extent
     arr *= 255.0

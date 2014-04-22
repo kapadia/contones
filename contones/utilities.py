@@ -12,13 +12,14 @@ from PIL import Image
 
 def get_metadata(fname, root):
     """Get metadata for a given file."""
+    
     fpath = os.path.join(root, fname)
     
     with rasterio.drivers():
         with rasterio.open(fpath) as src:
             meta = dict(src.meta)
             meta.pop('dtype', None)
-            return { fname: meta }
+            return meta
 
 def scale_image(arr, minimum, maximum):
     """Scale an array to uint8"""

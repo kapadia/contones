@@ -1,0 +1,9 @@
+<table>
+  <tbody>
+    <tr ng-repeat="(index, file) in files">
+      <td ng-class="{directory: file.isDir}" class="file" ng-click="onFile(file)" tabindex="{{index}}">
+        <i ng-class="{'fi-folder': file.isDir, 'fi-photo': !file.isDir}" class="large"></i>&nbsp;{{file.path | getBasename}}
+      </td>
+    </tr>
+  </tbody>
+</table>

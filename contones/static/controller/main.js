@@ -30,8 +30,11 @@
         } else {
           
           // Render image
+          console.log(file.path);
           var path = file.path.split('.')[0];
-          var route = ['/contone', path, '1'].join('/');
+          var bandIndex = 1;
+          var route = ['/contone', path, 'view', bandIndex].join('/');
+          console.log("route", route);
           $location.path(route);
           
         }

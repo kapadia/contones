@@ -6,3 +6,7 @@ contones/static/bower_components
 *.tif
 .ipynb_checkpoints
 *.ipynb
+build/
+node_modules/
+contones.egg-info/
+dist/

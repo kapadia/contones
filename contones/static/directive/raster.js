@@ -18,14 +18,8 @@
             context.drawImage(img, 0, 0);
           }
           
-          scope.$watch('filename', function(filename) {
-            
-            var deferred = $q.defer();
-            deferred.promise.then(updateImage);
-            Api.getRaster(deferred, scope.filename, scope.bandIndex, 0, 65535);
-          });
-          
-          scope.$watch('bandIndex', function(bandIndex) {
+          scope.$watch('bandIndex', function(newValue, oldValue) {
+            if (newValue === oldValue) { return; }
             
             var deferred = $q.defer();
             deferred.promise.then(updateImage);

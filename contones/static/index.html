@@ -6,8 +6,10 @@
 
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
-<link rel="stylesheet" type="text/css" href="static/main.css" />
+<link rel="stylesheet" type="text/css" href="static/bower_components/foundation/css/normalize.css" />
 <link rel="stylesheet" type="text/css" href="static/bower_components/foundation/css/foundation.css" />
+<link rel="stylesheet" type="text/css" href="static/styles/main.css" />
+<link rel="stylesheet" type="text/css" href="static/styles/foundation-icons.css" />
 
 <script type="text/javascript" src="static/bower_components/d3/d3.js"></script>
 <script type="text/javascript" src="static/bower_components/angular/angular.js"></script>
@@ -18,6 +20,7 @@
 <script type="text/javascript" src="static/service/debounce.js"></script>
 <script type="text/javascript" src="static/service/api.js"></script>
 <script type="text/javascript" src="static/controller/main.js"></script>
+<script type="text/javascript" src="static/controller/filesystem.js"></script>
 <script type="text/javascript" src="static/controller/contone.js"></script>
 <script type="text/javascript" src="static/directive/raster.js"></script>
 <script type="text/javascript" src="static/directive/histogram.js"></script>
@@ -28,6 +31,11 @@
 
   <div class="large-12 columns">
     <h4>Mapbox Contone</h4>
+    
+    <div ng-controller="FileSystemCtrl">
+      <button class="tiny button" ng-click="onBrowse()">Browse</button>
+    </div>
+    
     <div ng-view></div>
   </div>
 

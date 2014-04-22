@@ -34,6 +34,7 @@
           var yAxisEl = histogramEl.append('g').attr('class', 'y axis');
           
           function updateHistogram(data) {
+            console.log(data);
             histogramEl.selectAll(".bin").remove();
             svg.select(".brush").remove();
             
@@ -93,14 +94,8 @@
             
           }
           
-          scope.$watch('filename', function(filename) {
-            
-            var deferred = $q.defer();
-            deferred.promise.then(updateHistogram);
-            Api.getHistogram(deferred, scope.filename, scope.bandIndex);
-          });
-          
-          scope.$watch('bandIndex', function(bandIndex) {
+          scope.$watch('bandIndex', function(newValue, oldValue) {
+            if (newValue === oldValue) { return; }
             
             var deferred = $q.defer();
             deferred.promise.then(updateHistogram);

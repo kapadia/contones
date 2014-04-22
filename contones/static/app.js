@@ -9,7 +9,7 @@
           templateUrl: '/static/views/main.html',
           controller: 'MainCtrl'
         })
-        .when('/contone/:filename/:bandIndex', {
+        .when('/contone/:filename*\/view/:bandIndex', {
           templateUrl: '/static/views/contone.html',
           controller: 'ContoneCtrl'
         })

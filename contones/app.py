@@ -93,14 +93,21 @@ def get_raster_directory():
     return json.dumps(metadata_dict)
 
 
-@app.route('/raster/<string:filename>', methods=['GET'])
-def get_color(filename):
+@app.route('/metadata/<path:filepath>', methods=['GET'])
+def get_metadata_for_file(filepath):
+    metadata = get_metadata(filepath, DATA_DIR)
+    print "METADATA", metadata
+    return json.dumps(metadata)
+
+
+@app.route('/raster/<path:filepath>', methods=['GET'])
+def get_color(filepath):
     """
     Get a color image.
     """
-
-    fpath = os.path.join(DATA_DIR, "%s.tif" % filename)
-
+    fpath = os.path.join(DATA_DIR, filepath)
+    print "FPATH", fpath
+    
     if not os.path.exists(fpath):
         return jsonify({'error': 'File does not exist'})
 
@@ -122,10 +129,10 @@ def get_color(filename):
     return send_file(output, mimetype='image/png')
 
 
-@app.route('/raster/<string:filename>/<int:band_index>/<float:minimum>/<float:maximum>', methods=['GET'])
-@app.route('/raster/<string:filename>/<int:band_index>/<int:minimum>/<int:maximum>', methods=['GET'])
-@app.route('/raster/<string:filename>/<int:band_index>/<int:minimum>/<float:maximum>', methods=['GET'])
-@app.route('/raster/<string:filename>/<int:band_index>/<float:minimum>/<int:maximum>', methods=['GET'])
+@app.route('/raster/<path:filename>/<int:band_index>/<float:minimum>/<float:maximum>', methods=['GET'])
+@app.route('/raster/<path:filename>/<int:band_index>/<int:minimum>/<int:maximum>', methods=['GET'])
+@app.route('/raster/<path:filename>/<int:band_index>/<int:minimum>/<float:maximum>', methods=['GET'])
+@app.route('/raster/<path:filename>/<int:band_index>/<float:minimum>/<int:maximum>', methods=['GET'])
 def get_raster(filename, band_index, minimum, maximum):
     """
     Get a single band image.
@@ -136,8 +143,7 @@ def get_raster(filename, band_index, minimum, maximum):
         * Band doesn't exist
 
     """
-
-    fpath = os.path.join(DATA_DIR, "%s.tif" % filename)
+    fpath = os.path.join(DATA_DIR, filename)
 
     if not os.path.exists(fpath):
         return jsonify({'error': 'File does not exist'})
@@ -155,11 +161,11 @@ def get_raster(filename, band_index, minimum, maximum):
 
     return send_file(output, mimetype='image/png')
 
-@app.route('/stats/histogram/<string:filename>/<int:band_index>', methods=['GET'])
-def get_histogram(filename, band_index):
+@app.route('/stats/histogram/<path:filepath>/<int:band_index>', methods=['GET'])
+def get_histogram(filepath, band_index):
     """Get a histogram for a given band."""
     
-    fpath = os.path.join(DATA_DIR, "%s.tif" % filename)
+    fpath = os.path.join(DATA_DIR, filepath)
     
     if not os.path.exists(fpath):
         return jsonify({'error': 'File does not exist'})
@@ -174,10 +180,7 @@ def get_histogram(filename, band_index):
     
     arr = band.flatten()
     
-    # Using the modified Freedman-Diaconis rule for number of bins
-    iqr = scoreatpercentile(arr, 75) - scoreatpercentile(arr, 25)
-    bins = 8 * iqr / np.power(arr.size, 0.333)
-    
+    bins = 0.05 * np.iinfo(arr.dtype).max
     histogram, bin_edges = np.histogram(arr, bins=bins)
     obj = {
         "counts": histogram.tolist(),

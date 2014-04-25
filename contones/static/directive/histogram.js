@@ -2,7 +2,7 @@
   'use strict';
   
   angular.module('ContoneApp')
-    .directive('histogram', function($rootScope, $q, Api, debounce) {
+    .directive('histogram', function($rootScope, $q, Api) {
       
       return {
         restrict: 'C',

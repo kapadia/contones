@@ -45,7 +45,9 @@
       
       api.getHistogram = function(deferred, filename, band) {
         var url = ['', 'stats', 'histogram', filename, band].join('/');
-        if (band === 0) { deferred.resolve([]); }
+        
+        // Temporary spoof an empty response. Make this better.
+        if (band === 0) { deferred.resolve({"bin_edges": [], "counts": []}); }
         
         $http.get(url)
           .success(function(data, status, headers, config) {

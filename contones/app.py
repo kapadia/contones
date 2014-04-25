@@ -100,13 +100,12 @@ def get_metadata_for_file(filepath):
     return json.dumps(metadata)
 
 
-@app.route('/raster/<path:filepath>', methods=['GET'])
-def get_color(filepath):
+@app.route('/raster/<path:filepath>/<minimum>/<maximum>', methods=['GET'])
+def get_color(filepath, minimum, maximum):
     """
     Get a color image.
     """
     fpath = os.path.join(DATA_DIR, filepath)
-    print "FPATH", fpath
     
     if not os.path.exists(fpath):
         return jsonify({'error': 'File does not exist'})
@@ -124,15 +123,12 @@ def get_color(filepath):
 
     minimum = arr.min()
     maximum = arr.max()
-    output = scale_image(arr, minimum, maximum)
+    output = scale_image(arr, float(minimum), float(maximum))
 
     return send_file(output, mimetype='image/png')
 
 
-@app.route('/raster/<path:filename>/<int:band_index>/<float:minimum>/<float:maximum>', methods=['GET'])
-@app.route('/raster/<path:filename>/<int:band_index>/<int:minimum>/<int:maximum>', methods=['GET'])
-@app.route('/raster/<path:filename>/<int:band_index>/<int:minimum>/<float:maximum>', methods=['GET'])
-@app.route('/raster/<path:filename>/<int:band_index>/<float:minimum>/<int:maximum>', methods=['GET'])
+@app.route('/raster/<path:filename>/<int:band_index>/<minimum>/<maximum>', methods=['GET'])
 def get_raster(filename, band_index, minimum, maximum):
     """
     Get a single band image.
@@ -157,7 +153,7 @@ def get_raster(filename, band_index, minimum, maximum):
             band = src.read_band(band_index)
 
     band = ndimage.interpolation.zoom(band, 0.20)
-    output = scale_image(band, minimum, maximum)
+    output = scale_image(band, float(minimum), float(maximum))
 
     return send_file(output, mimetype='image/png')
 

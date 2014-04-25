@@ -34,7 +34,6 @@
           var yAxisEl = histogramEl.append('g').attr('class', 'y axis');
           
           function updateHistogram(data) {
-            console.log(data);
             histogramEl.selectAll(".bin").remove();
             svg.select(".brush").remove();
             

@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   
-  angular.module('ContoneApp', ['ngRoute', 'mm.foundation'])
+  angular.module('ContoneApp', ['ngRoute', 'mm.foundation', 'toggle-switch'])
     .config(function($routeProvider, $locationProvider) {
       
       $routeProvider
@@ -9,9 +9,10 @@
           templateUrl: '/static/views/main.html',
           controller: 'MainCtrl'
         })
-        .when('/contone/:filename*\/view/:bandIndex', {
+        .when('/contone/:filename*', {
           templateUrl: '/static/views/contone.html',
-          controller: 'ContoneCtrl'
+          controller: 'ContoneCtrl',
+          reloadOnSearch: false
         })
         .otherwise({
           redirectTo: '/'

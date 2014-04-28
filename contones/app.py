@@ -27,7 +27,8 @@ DATA_DIR = None
 #
 
 @app.route('/', methods=['GET'])
-def index():
+@app.route('/contone/<path:path>', methods=['GET'])
+def index(path=None):
     return send_file(url_for("static", filename='index.html'), mimetype="text/html")
 
 
@@ -37,12 +38,16 @@ def get_static(fpath):
 
 
 #
+#   JSON + Image API
+#
+
+#
 #   Filesystem
 #
 
-@app.route('/directory/', methods=['GET'], defaults={'relpath': ''})
-@app.route('/directory/<path:relpath>', methods=['GET'])
-def get_directory(relpath):
+@app.route('/api/files/', methods=['GET'])
+@app.route('/api/files/<path:relpath>', methods=['GET'])
+def get_files(relpath=''):
     """
     List contents of a directory. Filter files except for tiffs.
     The path argument is relative to the DATA_DIR path.
@@ -75,12 +80,11 @@ def get_directory(relpath):
     
     items = map(format_items, items)
     items = filter(filter_items, items)
-    print items
     
     return json.dumps(items)
 
 
-@app.route('/rasters', methods=['GET'])
+@app.route('/api/rasters', methods=['GET'])
 def get_raster_directory():
     """Return a list of images in the user specfied directory."""
 
@@ -93,14 +97,14 @@ def get_raster_directory():
     return json.dumps(metadata_dict)
 
 
-@app.route('/metadata/<path:filepath>', methods=['GET'])
+@app.route('/api/metadata/<path:filepath>', methods=['GET'])
 def get_metadata_for_file(filepath):
     metadata = get_metadata(filepath, DATA_DIR)
     print "METADATA", metadata
     return json.dumps(metadata)
 
 
-@app.route('/raster/<path:filepath>/<minimum>/<maximum>', methods=['GET'])
+@app.route('/api/raster/<path:filepath>/<minimum>/<maximum>', methods=['GET'])
 def get_color(filepath, minimum, maximum):
     """
     Get a color image.
@@ -127,9 +131,35 @@ def get_color(filepath, minimum, maximum):
 
     return send_file(output, mimetype='image/png')
 
+@app.route('/api/raster/<path:filepath>/color/<int:r>/<int:g>/<int:b>', methods=['GET'])
+def get_color_composite(filepath, r, g, b):
+    
+    fpath = os.path.join(DATA_DIR, filepath)
+    
+    if not os.path.exists(fpath):
+        return jsonify({'error': 'File does not exist'})
+    
+    
+    with rasterio.drivers():
+        with rasterio.open(fpath) as src:
+            
+            def get_band(index):
+                band = src.read_band(index)
+                return ndimage.interpolation.zoom(band, 0.20)
+            
+            bands = map(get_band, [r, g, b])
+    
+    arr = np.dstack(bands)
+    minimum = arr.min()
+    maximum = arr.max()
+    output = scale_image(arr, float(minimum), float(maximum))
+    
+    return send_file(output, mimetype='image/png')
 
-@app.route('/raster/<path:filename>/<int:band_index>/<minimum>/<maximum>', methods=['GET'])
-def get_raster(filename, band_index, minimum, maximum):
+@app.route('/api/raster/<path:filename>/<int:band_index>', methods=['GET'])
+@app.route('/api/raster/<path:filename>/<int:band_index>/<minimum>/<maximum>', methods=['GET'])
+# TODO: These defaults are only good with uint16 data.
+def get_raster(filename, band_index, minimum=0, maximum=65535):
     """
     Get a single band image.
 
@@ -157,7 +187,7 @@ def get_raster(filename, band_index, minimum, maximum):
 
     return send_file(output, mimetype='image/png')
 
-@app.route('/stats/histogram/<path:filepath>/<int:band_index>', methods=['GET'])
+@app.route('/api/stats/histogram/<path:filepath>/<int:band_index>', methods=['GET'])
 def get_histogram(filepath, band_index):
     """Get a histogram for a given band."""
     
@@ -200,4 +230,4 @@ if __name__ == '__main__':
         parser.exit()
 
     DATA_DIR = args.directory
-    app.run(debug=True)
+    app.run(debug=True, port=8000)

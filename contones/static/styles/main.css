@@ -1,3 +1,12 @@
+
+.full {
+   width: 100%;
+   margin-left: auto;
+   margin-right: auto;
+   max-width: initial;
+}
+
+
 .axis path, .axis line {
   fill: none;
   stroke: #000;
@@ -15,4 +24,18 @@
 
 .file {
   cursor: pointer;
+}
+
+.filesystem {
+  height: 300px;
+  overflow: scroll;
+}
+
+.filename {
+  font-family: Courier, sans-serif;
+  font-size: 14px;
+}
+
+button.active {
+  background-color: red;
 }

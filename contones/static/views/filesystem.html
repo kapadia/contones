@@ -1,9 +1,12 @@
-<table>
-  <tbody>
-    <tr ng-repeat="(index, file) in files">
-      <td ng-class="{directory: file.isDir}" class="file" ng-click="onFile(file)" tabindex="{{index}}">
-        <i ng-class="{'fi-folder': file.isDir, 'fi-photo': !file.isDir}" class="large"></i>&nbsp;{{file.path | getBasename}}
-      </td>
-    </tr>
-  </tbody>
-</table>
+<a href="#" class="tiny button" ng-click="onBack()"><i class="fi-arrow-left large">&nbsp;&nbsp;</i>Back</a>
+<div class="filesystem">
+  <table>
+    <tbody>
+      <tr ng-repeat="(index, file) in files">
+        <td ng-class="{directory: file.isDir}" class="file" ng-click="onFile(file)" tabindex="{{index}}">
+          <i ng-class="{'fi-folder': file.isDir, 'fi-photo': !file.isDir}" class="large"></i>&nbsp;{{file.path | getBasename}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

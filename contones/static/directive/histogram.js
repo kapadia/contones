@@ -2,12 +2,11 @@
   'use strict';
   
   angular.module('ContoneApp')
-    .directive('histogram', function($rootScope, $q, Api) {
+    .directive('histogram', function($rootScope, $q, $location, Api) {
       
       return {
         restrict: 'C',
         link: function postLink(scope, element, attrs) {
-          console.log('histogram directive');
           
           var width = element[0].offsetWidth;
           var height = width * 9 / 16;
@@ -42,7 +41,6 @@
             
             var minimum = binEdges[0];
             var maximum = binEdges[binEdges.length - 1];
-            
             var histogram = counts.map(function(d, i) {
               return {
                 count: d,
@@ -78,19 +76,23 @@
                 });
             
             // Brushing interaction
+            var brush = d3.svg.brush().x(x).on('brushend', function() {
+              $rootScope.$broadcast("getImageScaled", d3.event.target.extent());
+            });
+            scope.minimum = Math.max(minimum, scope.minimum);
+            scope.maximum = Math.min(maximum, scope.maximum);
+            $location.search('minimum', scope.minimum);
+            $location.search('maximum', scope.maximum);
+            
+            brush.extent([scope.minimum, maximum]);
             svg.append("g")
               .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
               .attr('width', width)
               .attr('height', height)
               .attr('class', 'brush')
-              .call(d3.svg.brush().x(x)
-                .on('brushend', function() {
-                  $rootScope.$broadcast("getImageScaled", d3.event.target.extent());  
-                })
-              )
+              .call(brush)
               .selectAll('rect')
-              .attr('height', height);
-            
+                .attr('height', height);
           }
           
           scope.$watch('bandIndex', function(newValue, oldValue) {

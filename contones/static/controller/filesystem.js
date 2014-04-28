@@ -14,7 +14,6 @@
       Api.getFiles(deferred, path);
       
       $scope.onBrowse = function() {
-        
         var modalInstance = $modal.open({
           templateUrl: '/static/views/filesystem.html',
           controller: 'ModalInstanceCtrl',
@@ -22,23 +21,43 @@
             files: function() { return $scope.files; }
           }
         });
-        
-        // modalInstance.result.then(function(selectedItem) {
-        //   $scope.selected = selectedItem;
-        // }, function() {
-        //   $log.info('Modal dismissed');
-        // });
-        
       };
+      
     
     });
 
   angular.module('ContoneApp')
-    .controller('ModalInstanceCtrl', function($scope, $modalInstance, files) {
-      console.log('ModalInstanceCtrl');
-      
+    .controller('ModalInstanceCtrl', function($scope, $q, $modalInstance, $location, Api, files) {
+      var path = null;
       $scope.files = files;
       
+      function getFiles(path) {
+        var deferred = $q.defer();
+        deferred.promise.then(function(data) {
+          $scope.files = data;
+        });
+        Api.getFiles(deferred, path);
+      }
+      
+      $scope.onFile = function(file) {
+        
+        if (file.isDir) {
+          path = file.path;
+          getFiles(path);
+        } else {
+          var url = ['contone', file.path].join('/');
+          $location.path(url);
+          $modalInstance.close();
+        }
+      }
+      
+      $scope.onBack = function() {
+        var pathTmp = path.split('/');
+        pathTmp.pop();
+        path = pathTmp.join('/');
+        
+        getFiles(path);
+      }
       
       $scope.ok = function() {
         $modalInstance.close();

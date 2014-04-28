@@ -27,7 +27,7 @@
     });
 
   angular.module('ContoneApp')
-    .controller('ModalInstanceCtrl', function($scope, $q, $modalInstance, $location, Api, files) {
+    .controller('ModalInstanceCtrl', function($scope, $rootScope, $q, $modalInstance, $location, $timeout, Api, files) {
       var path = null;
       $scope.files = files;
       
@@ -57,6 +57,17 @@
         path = pathTmp.join('/');
         
         getFiles(path);
+      }
+      
+      $scope.onThumbnails = function() {
+        var files = $scope.files.filter(function(f) { return !f.isDir; });
+        var paths = files.map(function(d) { return d.path; });
+        $location.path('/');
+        
+        $timeout(function() {
+          $scope.$emit('thumbnails', paths);
+        });
+        
       }
       
       $scope.ok = function() {

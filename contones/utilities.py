@@ -37,3 +37,9 @@ def scale_image(arr, minimum, maximum):
     output.seek(0)
     
     return output
+
+def get_color_bands(count):
+    """
+    Reasonable defaults for the order in which bands are stored in multispectral geotiffs.
+    """
+    return [1, 2, 3] if count is 3 else [3, 2, 1]

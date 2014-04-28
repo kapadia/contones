@@ -1,15 +1,6 @@
 
-<!-- 
-<h6>
-  <span ng-repeat="directory in relpath track by $index">{{directory}}</span>  
-</h6>
-<a href="#" ng-click="onParent()" class="tiny button">Back</a>
-
-<table>
-  <tbody>
-    <tr ng-repeat="(index, file) in files">
-      <td ng-class="{directory: file.isDir}" class="file" ng-click="onFile(file)">{{file.path | getBasename}}</td>
-    </tr>
-  </tbody>
-</table>
- -->
+<ul class="small-block-grid-4">
+  <li ng-repeat="thumbnail in thumbnails">
+    <img ng-src="{{thumbnail}}">
+  </li>
+</ul>

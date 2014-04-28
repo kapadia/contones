@@ -13,13 +13,13 @@ from scipy.stats import scoreatpercentile
 from PIL import Image
 import rasterio
 
-from contones.utilities import get_metadata, scale_image
+from contones.utilities import get_metadata, scale_image, get_color_bands
 
 
 root_dir = os.path.dirname(
     os.path.abspath(inspect.getfile(inspect.currentframe())))
 static_path = os.path.join(root_dir, 'static')
-app = Flask('contones', static_path=static_path)
+app = Flask('contone', static_path=static_path)
 DATA_DIR = None
 
 #
@@ -86,7 +86,7 @@ def get_files(relpath=''):
 
 @app.route('/api/rasters', methods=['GET'])
 def get_raster_directory():
-    """Return a list of images in the user specfied directory."""
+    """Return a list of images and directories in the user specfied directory."""
 
     images = filter(lambda f: os.path.splitext(
         f)[1] in ['.tif', '.tiff'], os.listdir(DATA_DIR))
@@ -100,8 +100,34 @@ def get_raster_directory():
 @app.route('/api/metadata/<path:filepath>', methods=['GET'])
 def get_metadata_for_file(filepath):
     metadata = get_metadata(filepath, DATA_DIR)
-    print "METADATA", metadata
     return json.dumps(metadata)
+
+
+@app.route('/api/thumbnail/<path:filepath>')
+def get_thumbnail(filepath):
+    """ Get color thumbnail for a specified geotiff. """
+    
+    fpath = os.path.join(DATA_DIR, filepath)
+    
+    if not os.path.exists(fpath):
+        return jsonify({'error': 'File does not exist'})
+    
+    with rasterio.drivers():
+        with rasterio.open(fpath) as src:
+            
+            def get_band(index):
+                band = src.read_band(index)
+                return ndimage.interpolation.zoom(band, 0.10)
+            
+            count = src.meta["count"]
+            bands = map(get_band, get_color_bands(count))
+    
+    arr = np.dstack(bands)
+    
+    minimum, maximum = arr.min(), arr.max()
+    output = scale_image(arr, float(minimum), float(maximum))
+    
+    return send_file(output, mimetype='image/png')
 
 
 @app.route('/api/raster/<path:filepath>/<minimum>/<maximum>', methods=['GET'])
@@ -121,12 +147,12 @@ def get_color(filepath, minimum, maximum):
                 band = src.read_band(index)
                 return ndimage.interpolation.zoom(band, 0.20)
 
-            bands = map(get_band, range(3, 0, -1))
+            count = src.meta["count"]
+            bands = map(get_band, get_color_bands(count))
 
     arr = np.dstack(bands)
 
-    minimum = arr.min()
-    maximum = arr.max()
+    minimum, maximum = arr.min(), arr.max()
     output = scale_image(arr, float(minimum), float(maximum))
 
     return send_file(output, mimetype='image/png')
@@ -150,8 +176,7 @@ def get_color_composite(filepath, r, g, b):
             bands = map(get_band, [r, g, b])
     
     arr = np.dstack(bands)
-    minimum = arr.min()
-    maximum = arr.max()
+    minimum, maximum = arr.min(), arr.max()
     output = scale_image(arr, float(minimum), float(maximum))
     
     return send_file(output, mimetype='image/png')
@@ -219,7 +244,7 @@ def get_histogram(filepath, band_index):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Cloud based image viewer for larger raster data (e.g. contones).')
+        description='Cloud based image viewer for larger raster data.')
     parser.add_argument(
         "directory", help="specify the directory containing images to view.")
     args = parser.parse_args()

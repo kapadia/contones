@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   
-  angular.module('ContoneApp', ['ngRoute', 'mm.foundation'])
+  angular.module('ContoneApp', ['ngRoute', 'mm.foundation', 'btford.dragon-drop'])
     .config(function($routeProvider, $locationProvider) {
       
       $routeProvider

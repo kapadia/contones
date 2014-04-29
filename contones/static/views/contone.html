@@ -5,39 +5,18 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="large-1 columns">
-    <input type="checkbox" ng-model="colorComposite"><label for="checkbox1">Color</label>
-  </div>
-  
-  <div class="large-11 columns">
-    
-    <div ng-if="colorComposite">
-      <label>Choose RGB</label>
-      <span ng-repeat="bandIndex in bands">
-        <input type="checkbox" name="bands" ng-value="((bandIndex))" ng-model="colorBands[bandIndex]" ng-click="onColorBand(bandIndex)">
-        <label>{{bandIndex}}</label>
-      </span>
-    </div>
-    
-    <div ng-if="!colorComposite">
-      
-      <label>Choose a single band</label>
-      <span ng-repeat="bandIndex in bands">
-        <input type="radio" name="band" ng-model="band.selected" ng-value="((bandIndex))">
-        <label>{{bandIndex}}</label>
-      </span>
-    </div>
-    
-  </div>
-</div>
-
-
 <ul class="button-group">
-  <li ng-click="onBand(0)"><a href="#" class="tiny button">Color</a></li>
-  <li ng-repeat="bandIndex in bands" ng-click="onBand(bandIndex)"><a href="#" class="tiny button">{{bandIndex}}</a></li>
+  <li ng-click="onColor()"><a href="#" ng-class="{alert: colorComposite}" class="tiny button">Color</a></li>
+  
+  <li ng-if="colorComposite" ng-repeat="bandIndex in bands" ng-click="onColorBand(bandIndex)">
+    <a href="#" ng-class="{alert: colorOrder.indexOf(bandIndex) > -1}" class="tiny button">{{bandIndex}}</a>
+  </li>
+  
+  <li ng-if="!colorComposite" ng-repeat="bandIndex in bands" ng-click="onBand(bandIndex)">
+    <a href="#" class="tiny button">{{bandIndex}}</a>
+  </li>
+  
 </ul>
-
 
 <div class="large-7 columns">
   <canvas class="raster"></canvas>

@@ -3,7 +3,7 @@
 
   
   angular.module('ContoneApp')
-    .controller('ContoneCtrl', function($scope, $routeParams, $q, $location, $timeout, Api) {
+    .controller('ContoneCtrl', function($scope, $routeParams, $q, $location, Api) {
       console.log('ContoneCtrl');
       
       var fname = $routeParams.filename;
@@ -24,38 +24,39 @@
           function(previous, current) { previous[current] = false; return previous;}, {}
         );
         
+        $scope.colorOrder = data.count === 3 ? [1, 2, 3] : [3, 2, 1];
       });
       Api.getMetadata(deferred, fname);
       
       
-      $scope.$watch('band.selected', function(newValue, oldValue) {
-        $location.search('bandIndex', newValue);
-        $scope.bandIndex = newValue;
-      })
+      $scope.onBand = function(index) {
+        $location.search('bandIndex', index);
+        $scope.bandIndex = index;
+      }
       
+      $scope.onColor = function() {
+        $scope.colorComposite = $scope.colorComposite ? false : true;
+        
+        if ($scope.colorComposite && $scope.colorOrder.length === 3) {
+          $scope.$broadcast("getColorComposite", $scope.colorOrder);
+        } else {
+          $scope.bandIndex = $scope.bandIndex;
+        }
+        
+      }
       
       $scope.onColorBand = function(index) {
         
-        $timeout(function() {
-          
-          if ($scope.colorBands[index] === true) {
-            colorBands.push(index);
-          } else {
-            var i = colorBands.indexOf(index);
-            colorBands.splice(i, 1);
-          }
-          
-          if (colorBands.length === 3) {
-            console.log("REQUEST COLOR", colorBands);
-            $scope.$broadcast("getColorComposite", colorBands);
-            
-            // Reset the array
-            $scope.colorBands = $scope.bands.reduce(
-              function(previous, current) { previous[current] = false; return previous;}, {}
-            );
-            colorBands = [];
-          }
-        }, 0)
+        if ($scope.colorOrder.length === 3) {
+          $scope.colorOrder.length = 0;
+        }
+        if ($scope.colorOrder.indexOf(index) > -1) { return; }
+        
+        $scope.colorOrder.push(index);
+        
+        if ($scope.colorOrder.length === 3) {
+          $scope.$broadcast("getColorComposite", $scope.colorOrder);
+        }
       }
       
     });

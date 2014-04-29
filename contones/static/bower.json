@@ -7,7 +7,6 @@
     "angular": "1.2.x",
     "angular-route": "1.2.x",
     "angular-foundation": "0.1.x",
-    "angular-toggle-switch": "0.3.x",
     "lodash": "2.4.x",
     "d3": "3.3.x",
     "rawimage.js": "0.5.x"

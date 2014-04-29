@@ -39,3 +39,11 @@
 button.active {
   background-color: red;
 }
+
+.band-controls {
+  display: inline-block;
+}
+
+.inline {
+  display: inline-block;
+}

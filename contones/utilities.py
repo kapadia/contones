@@ -18,7 +18,7 @@ def get_metadata(fname, root):
     with rasterio.drivers():
         with rasterio.open(fpath) as src:
             meta = dict(src.meta)
-            meta.pop('dtype', None)
+            meta["dtype"] = str(meta["dtype"])
             return meta
 
 def scale_image(arr, minimum, maximum):

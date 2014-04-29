@@ -7,23 +7,23 @@
       console.log('ContoneCtrl');
       
       var fname = $routeParams.filename;
-      $scope.filename = fname;
-      // TODO: These are only good for uint16 data
-      $scope.minimum = $routeParams.minimum || 0;
-      $scope.maximum = $routeParams.maximum || 65535;
-      $scope.band = {selected: null}
       var colorBands = [];
       
+      $scope.filename = fname;
+      console.log($scope.minimum, $scope.maximum);
       var deferred = $q.defer();
       deferred.promise.then(function(data) {
         $scope.metadata = data;
+        
+        $scope.minimum = $routeParams.minimum || 0;
+        $scope.maximum = $routeParams.maximum || (data.dtype.contains('uint8') ? 255 : 65535);
+        
         $scope.bands = Array.apply(null, {length: data.count}).map(function(d, i) { return i + 1}, Number);
-        $scope.bandIndex = $routeParams.bandIndex;
+        $scope.bandIndex = $routeParams.bandIndex || 0;
         
         $scope.colorBands = $scope.bands.reduce(
           function(previous, current) { previous[current] = false; return previous;}, {}
         );
-        
         $scope.colorOrder = data.count === 3 ? [1, 2, 3] : [3, 2, 1];
       });
       Api.getMetadata(deferred, fname);

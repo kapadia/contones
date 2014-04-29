@@ -28,6 +28,7 @@
           
           
           scope.$on("getImageScaled", function(obj, extent) {
+            
             extent = extent.map(function(d) { return parseInt(d); });
             $location.search('minimum', extent[0]);
             $location.search('maximum', extent[1]);

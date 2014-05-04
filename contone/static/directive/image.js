@@ -7,7 +7,9 @@
       return {
         restrict: 'C',
         link: function postLink(scope, element, attrs) {
+          console.log('linking raster');
           var el = element[0];
+          el.width = el.width;
           var context = el.getContext('2d');
           
           

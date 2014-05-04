@@ -1,6 +1,6 @@
 
 <div class="row">
-  <div class="large-6 columns">
+  <div class="large-12 columns">
     <p class='filename'>{{filename}}</p>
   </div>
 </div>
@@ -8,12 +8,12 @@
 <ul class="button-group">
   <li ng-click="onColor()"><a href="#" ng-class="{alert: colorComposite}" class="tiny button">Color</a></li>
   
-  <li ng-if="colorComposite" ng-repeat="bandIndex in bands" ng-click="onColorBand(bandIndex)">
-    <a href="#" ng-class="{alert: colorOrder.indexOf(bandIndex) > -1}" class="tiny button">{{bandIndex}}</a>
+  <li ng-if="colorComposite" ng-repeat="index in bands" ng-click="onColorBand(index)">
+    <a href="#" ng-class="{alert: colorOrder.indexOf(index) > -1}" class="tiny button">{{index}}</a>
   </li>
   
   <li ng-if="!colorComposite" ng-repeat="index in bands" ng-click="onBand(index)">
-    <a href="#" class="tiny button">{{index}}</a>
+    <a href="#" ng-class="{alert: bandIndex === index}" class="tiny button">{{index}}</a>
   </li>
   
 </ul>

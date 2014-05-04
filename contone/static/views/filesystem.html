@@ -19,7 +19,7 @@
     <div class="large-6 columns">
       <ul class="small-block-grid-4">
         <li ng-repeat="(index, image) in images">
-          <a href="contone/{{image.path}}" class="tiny button">
+          <a href="{{image.path}}" class="tiny button">
             <i class="large fi-photo"></i>&nbsp;{{image.path | getBasename }}
           </a>
         </li>

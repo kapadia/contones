@@ -214,8 +214,8 @@ def get_color_composite(filepath, r, g, b):
     
     return send_file(output, mimetype='image/png')
 
-@app.route('/api/raster/<int:band_index>/<minimum>/<maximum>', methods=['GET'])
-def get_raster_test(band_index, minimum, maximum):
+@app.route('/api/raster/<path:fpath>/<int:band_index>/<minimum>/<maximum>/', methods=['GET'])
+def get_raster_test(fpath, band_index, minimum, maximum):
     """
     Testing new function that reads a raster from memory.
     """

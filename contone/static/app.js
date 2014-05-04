@@ -10,8 +10,8 @@
           controller: 'MainCtrl'
         })
         .when('/contone/:filename*', {
-          templateUrl: '/static/views/contone.html',
-          controller: 'ContoneCtrl',
+          templateUrl: '/static/views/image.html',
+          controller: 'ImageCtrl',
           reloadOnSearch: false
         })
         .otherwise({

@@ -47,12 +47,15 @@
       }
       
       
-      api.getRaster = function(deferred, band, minimum, maximum) {
-        var url = ['', 'api', 'raster', band, minimum, maximum];
+      api.getRaster = function(deferred, filepath, band, minimum, maximum) {
+        
+        // var random = Math.random().toString(36).substr(2, 6);
+        var url = ['', 'api', 'raster', filepath, band, minimum, maximum];
         var img = new Image();
         img.onload = function() {
           deferred.resolve(img);
         }
+        console.log('img src', url.join('/'));
         img.src = url.join('/');
       }
       

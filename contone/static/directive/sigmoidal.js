@@ -10,13 +10,14 @@
         link: function postLink(scope, element, attrs) {
           console.log('sigmoidal directive');
           
-          scope.$watch('threshold', _.debounce(function() {
-            $rootScope.$broadcast("getSigmoidal", scope.threshold, scope.contrast);
-          }, 800))
+          // scope.$watch('threshold', _.debounce(function() {
+          //   $rootScope.$broadcast("getSigmoidal", scope.threshold, scope.contrast);
+          // }, 800))
+          // 
+          // scope.$watch('contrast', _.debounce(function() {
+          //   $rootScope.$broadcast("getSigmoidal", scope.threshold, scope.contrast);
+          // }, 800));
           
-          scope.$watch('contrast', _.debounce(function() {
-            $rootScope.$broadcast("getSigmoidal", scope.threshold, scope.contrast);
-          }, 800));
         }
       }
       

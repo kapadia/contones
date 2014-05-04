@@ -3,43 +3,32 @@
 
   
   angular.module('ContoneApp')
-    .controller('ContoneCtrl', function($scope, $routeParams, $q, $location, Api) {
-      console.log('ContoneCtrl');
-      
+    .controller('ImageCtrl', function($scope, $routeParams, $q, $location, Api) {
       var colorBands = [];
       
       $scope.filename = $routeParams.filename;
-      $scope.bandIndex = $routeParams.bandIndex || 0; // Default to color
+      $scope.bandIndex = parseInt($routeParams.bandIndex) || 0;
+      $scope.colorComposite = ($scope.bandIndex === 0) ? true : false;
       
-      // Create deferred objects for multiple requests
       var dfd1 = $q.defer();
       var dfd2 = $q.defer();
       
       $q.all([dfd1.promise, dfd2.promise]).then(function() {
-        
-        // Called when the file and band(s) have been set
-        // and metadata retrieved.
-        
         var dfd = $q.defer();
-        // Get the image
-        dfd.promise.then(function(data) {
-          $scope.image = data;
-        });
-        Api.getRaster(dfd, $scope.bandIndex, $scope.minimum, $scope.maximum);
-        
+        dfd.promise.then(function(data) { $scope.image = data; });
+        Api.getRaster(dfd, $scope.filename, $scope.bandIndex, $scope.minimum, $scope.maximum);
       });
       
-      // Set the file
       Api.setFile(dfd1, $scope.filename, $scope.bandIndex);
       
-      // Get metadata
       dfd2.promise.then(function(data) {
         var dtype = data["dtype"];
         
+        $scope.bitdepth = (data.dtype.contains('uint8') ? 8 : 16);
+        $scope.count = data.count;
+        
         $scope.minimum = parseInt($routeParams.minimum) || 0;
         $scope.maximum = parseInt($routeParams.maximum) || (data.dtype.contains('uint8') ? 255 : 65535);
-        $scope.threshold = 100.0;
-        $scope.contrast = 100.0;
         $scope.bands = Array.apply(null, {length: data.count}).map(function(d, i) { return i + 1}, Number);
         
         $scope.colorBands = $scope.bands.reduce(
@@ -51,15 +40,19 @@
       Api.getMetadata(dfd2, $scope.filename);
       
       
+      //
+      // UI Handlers
+      //
+      
       $scope.onBand = function(index) {
-        var deferred = $q.defer();
+        var dfd = $q.defer();
         
-        deferred.promise.then(function(data) {
+        dfd.promise.then(function(data) {
           $scope.image = data;
           $scope.bandIndex = index;
           $location.search('bandIndex', index);
         });
-        Api.getRaster(deferred, index, $scope.minimum, $scope.maximum);
+        Api.getRaster(dfd, $scope.filename, index, $scope.minimum, $scope.maximum);
       }
       
       
@@ -69,9 +62,8 @@
         if ($scope.colorComposite && $scope.colorOrder.length === 3) {
           $scope.$broadcast("getColorComposite", $scope.colorOrder);
         } else {
-          $scope.bandIndex = $scope.bandIndex;
+          $scope.onBand($scope.bandIndex);
         }
-        
       }
       
       $scope.onColorBand = function(index) {

@@ -21,7 +21,7 @@ root_dir = os.path.dirname(
 static_path = os.path.join(root_dir, 'static')
 app = Flask('contone', static_path=static_path)
 DATA_DIR = None
-BANDS = []
+BANDS = None
 IMG_WIDTH = 600.0
 
 
@@ -137,7 +137,7 @@ def get_thumbnail(filepath):
 
 @app.route('/api/raster/<path:filepath>', methods=['POST'])
 def set_image(filepath):
-    """ Store the entire image in memory for faster operations. """
+    """ Store the entire image in memory for faster subsequent operations. """
     
     fpath = os.path.join(DATA_DIR, filepath)
     
@@ -149,14 +149,13 @@ def set_image(filepath):
             zoom = IMG_WIDTH / src.meta["width"]
             
             def get_band(index):
-                band = src.read_band(index)
-                zoom = 600.0 / band.shape[1]
+                band = src.read_band(index + 1)
                 return ndimage.interpolation.zoom(band, zoom)
             
-            count = src.meta["count"]
             global BANDS
-            
-            BANDS = map(get_band, range(1, count + 1))
+            BANDS = np.dstack(
+                map(get_band, range(0, src.meta["count"]))
+            )
     
     return jsonify({'success': 'success'})
     
@@ -200,15 +199,17 @@ def get_color_composite(filepath, r, g, b):
     
     with rasterio.drivers():
         with rasterio.open(fpath) as src:
+            zoom = IMG_WIDTH / src.meta["width"]
             
             def get_band(index):
                 band = src.read_band(index)
-                zoom = 600.0 / band.shape[1]
                 return ndimage.interpolation.zoom(band, zoom)
             
-            bands = map(get_band, [r, g, b])
+            arr = np.dstack(
+                map(get_band, [r, g, b])
+            )
+    print arr
     
-    arr = np.dstack(bands)
     minimum, maximum = arr.min(), arr.max()
     output = scale_image(arr, float(minimum), float(maximum))
     
@@ -219,19 +220,20 @@ def get_raster_test(fpath, band_index, minimum, maximum):
     """
     Testing new function that reads a raster from memory.
     """
+    print "GET RASTER TEST"
     
     if BANDS is None:
         return jsonify({'error': 'Image is not in memory'})
     
     if band_index == 0:
-        count = len(BANDS)
-        color_bands = get_color_bands(count)
-        bands = [band for index, band in enumerate(BANDS) if index in color_bands]
-        bands.reverse()
-        arr = np.dstack(bands)
+        if BANDS.shape[2] == 3:
+            arr = BANDS[:, :, 0:3]
+        else:
+            arr = BANDS[:, :, 2::-1]
     else:
-        arr = BANDS[band_index - 1]
+        arr = BANDS[:, :, band_index - 1]
     
+    minimum, maximum = arr.min(), arr.max()
     output = scale_image(arr, float(minimum), float(maximum))
     return send_file(output, mimetype='image/png')
 

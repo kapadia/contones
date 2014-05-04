@@ -25,17 +25,16 @@
         var dtype = data["dtype"];
         
         $scope.bitdepth = (data.dtype.contains('uint8') ? 8 : 16);
-        $scope.count = data.count;
+        $scope.count = parseInt(data.count);
         
         $scope.minimum = parseInt($routeParams.minimum) || 0;
         $scope.maximum = parseInt($routeParams.maximum) || (data.dtype.contains('uint8') ? 255 : 65535);
-        $scope.bands = Array.apply(null, {length: data.count}).map(function(d, i) { return i + 1}, Number);
+        $scope.bands = Array.apply(null, {length: $scope.count}).map(function(d, i) { return i + 1}, Number);
         
         $scope.colorBands = $scope.bands.reduce(
           function(previous, current) { previous[current] = false; return previous;}, {}
         );
-        $scope.colorOrder = data.count === 3 ? [1, 2, 3] : [3, 2, 1];
-        
+        $scope.colorOrder = $scope.count === 3 ? [1, 2, 3] : [3, 2, 1];
       });
       Api.getMetadata(dfd2, $scope.filename);
       

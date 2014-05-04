@@ -2,13 +2,28 @@
 <a href="#" class="tiny button" ng-click="onThumbnails()"><i class="fi-thumbnails large">&nbsp;&nbsp;</i>Thumbnails</a>
 
 <div class="filesystem">
-  <table>
-    <tbody>
-      <tr ng-repeat="(index, file) in files">
-        <td ng-class="{directory: file.isDir}" class="file" ng-click="onFile(file)" tabindex="{{index}}">
-          <i ng-class="{'fi-folder': file.isDir, 'fi-photo': !file.isDir}" class="large"></i>&nbsp;{{file.path | getBasename}}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  
+    <div class="large-6 columns">
+      <h6>{{path | prefixPath}} </h6>
+      <table>
+        <tbody>
+          <tr ng-repeat="(index, directory) in directories">
+            <td class="directory file" ng-click="onDirectory(directory)">
+              <i class="large fi-folder"></i>&nbsp;{{directory.path | getBasename }}
+            </td> 
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="large-6 columns">
+      <ul class="small-block-grid-4">
+        <li ng-repeat="(index, image) in images">
+          <a href="contone/{{image.path}}" class="tiny button">
+            <i class="large fi-photo"></i>&nbsp;{{image.path | getBasename }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  
 </div>

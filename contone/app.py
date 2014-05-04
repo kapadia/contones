@@ -119,6 +119,7 @@ def get_thumbnail(filepath):
         with rasterio.open(fpath) as src:
             
             def get_band(index):
+                index += 1
                 band = src.read_band(index)
                 zoom = 300.0 / band.shape[1]
                 return ndimage.interpolation.zoom(band, zoom)

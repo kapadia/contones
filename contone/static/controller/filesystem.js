@@ -7,18 +7,23 @@
       
       var path = '';
       
-      var deferred = $q.defer();
-      deferred.promise.then(function(data) {
-        $scope.files = data;
+      var dfd = $q.defer();
+      dfd.promise.then(function(data) {
+        
+        $scope.directories = data.filter(function(f) { return f.isDir; });
+        $scope.images = data.filter(function(f) { return !f.isDir; });
+        
       });
-      Api.getFiles(deferred, path);
+      Api.getFiles(dfd, path);
       
       $scope.onBrowse = function() {
         var modalInstance = $modal.open({
           templateUrl: '/static/views/filesystem.html',
           controller: 'ModalInstanceCtrl',
           resolve: {
-            files: function() { return $scope.files; }
+            path: function() { return path; },
+            directories: function() { return $scope.directories; },
+            images: function() { return $scope.images; }
           }
         });
       };
@@ -27,41 +32,38 @@
     });
 
   angular.module('ContoneApp')
-    .controller('ModalInstanceCtrl', function($scope, $rootScope, $q, $modalInstance, $location, $timeout, Api, files) {
-      var path = null;
-      $scope.files = files;
+    .controller('ModalInstanceCtrl', function($scope, $rootScope, $q, $modalInstance, $location, $timeout, Api, path, directories, images) {
+      
+      $scope.path = path;
+      $scope.directories = directories;
+      $scope.images = images;
       
       function getFiles(path) {
-        var deferred = $q.defer();
-        deferred.promise.then(function(data) {
-          $scope.files = data;
+        var dfd = $q.defer();
+        dfd.promise.then(function(data) {
+          
+          $scope.directories = data.filter(function(f) { return f.isDir; });
+          $scope.images = data.filter(function(f) { return !f.isDir; });
+          
         });
-        Api.getFiles(deferred, path);
+        Api.getFiles(dfd, path);
       }
       
-      $scope.onFile = function(file) {
-        
-        if (file.isDir) {
-          path = file.path;
-          getFiles(path);
-        } else {
-          var url = ['contone', file.path].join('/');
-          $location.path(url);
-          $modalInstance.close();
-        }
+      $scope.onDirectory = function(file) {
+        $scope.path = file.path;
+        getFiles($scope.path);
       }
       
       $scope.onBack = function() {
-        var pathTmp = path.split('/');
+        var pathTmp = $scope.path.split('/');
         pathTmp.pop();
-        path = pathTmp.join('/');
+        $scope.path = pathTmp.join('/');
         
-        getFiles(path);
+        getFiles($scope.path);
       }
       
       $scope.onThumbnails = function() {
-        var files = $scope.files.filter(function(f) { return !f.isDir; });
-        var paths = files.map(function(d) { return d.path; });
+        var paths = $scope.images.map(function(d) { return d.path; });
         $location.path('/');
         
         $timeout(function() {

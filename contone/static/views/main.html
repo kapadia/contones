@@ -1,5 +1,7 @@
 <ul class="small-block-grid-4">
-  <li ng-repeat="thumbnail in thumbnails">
-    <img ng-src="{{thumbnail}}">
+  <li ng-repeat="file in files">
+    <a href="contone/{{file}}">
+      <img ng-src="/api/thumbnail/{{file}}">
+    </a>
   </li>
 </ul>

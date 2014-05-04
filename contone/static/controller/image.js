@@ -14,18 +14,18 @@
       // Create deferred objects for multiple requests
       var dfd1 = $q.defer();
       var dfd2 = $q.defer();
-      var dfd3 = $q.defer();
       
       $q.all([dfd1.promise, dfd2.promise]).then(function() {
         
         // Called when the file and band(s) have been set
         // and metadata retrieved.
         
+        var dfd = $q.defer();
         // Get the image
-        dfd3.promise.then(function(data) {
+        dfd.promise.then(function(data) {
           $scope.image = data;
         });
-        Api.getRaster(dfd3, $scope.bandIndex, $scope.minimum, $scope.maximum);
+        Api.getRaster(dfd, $scope.bandIndex, $scope.minimum, $scope.maximum);
         
       });
       
@@ -55,7 +55,6 @@
         var deferred = $q.defer();
         
         deferred.promise.then(function(data) {
-          console.log('resolved', data);
           $scope.image = data;
           $scope.bandIndex = index;
           $location.search('bandIndex', index);

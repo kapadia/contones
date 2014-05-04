@@ -18,12 +18,9 @@
           }
           
           
-          scope.$watch('bandIndex', function(newValue, oldValue) {
+          scope.$watch('image', function(newValue, oldValue) {
             if (newValue === oldValue) { return; }
-            
-            var deferred = $q.defer();
-            deferred.promise.then(updateImage);
-            Api.getRaster(deferred, scope.filename, scope.bandIndex, scope.minimum, scope.maximum);
+            updateImage(newValue);
           });
           
           
@@ -35,8 +32,16 @@
             
             var deferred = $q.defer();
             deferred.promise.then(updateImage);
-            Api.getRaster(deferred, scope.filename, scope.bandIndex, extent[0], extent[1]);
+            Api.getRaster(deferred, scope.bandIndex, extent[0], extent[1]);
           });
+          
+          scope.$on("getSigmoidal", function(obj, threshold, contrast) {
+            console.log(threshold, contrast);
+            
+            var deferred = $q.defer();
+            deferred.promise.then(updateImage);
+            Api.getSigmoidal(deferred, scope.bandIndex, threshold, contrast, scope.minimum, scope.maximum);
+          })
           
           
           scope.$on('getColorComposite', function(obj, colorBands) {

@@ -1,6 +1,6 @@
 .DS_Store
-contones/static/node_modules
-contones/static/bower_components
+contone/static/node_modules
+contone/static/bower_components
 *.pyc
 *.tiff
 *.tif
@@ -8,5 +8,5 @@ contones/static/bower_components
 *.ipynb
 build/
 node_modules/
-contones.egg-info/
+contone.egg-info/
 dist/

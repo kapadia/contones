@@ -12,8 +12,8 @@
     <a href="#" ng-class="{alert: colorOrder.indexOf(bandIndex) > -1}" class="tiny button">{{bandIndex}}</a>
   </li>
   
-  <li ng-if="!colorComposite" ng-repeat="bandIndex in bands" ng-click="onBand(bandIndex)">
-    <a href="#" class="tiny button">{{bandIndex}}</a>
+  <li ng-if="!colorComposite" ng-repeat="index in bands" ng-click="onBand(index)">
+    <a href="#" class="tiny button">{{index}}</a>
   </li>
   
 </ul>
@@ -24,4 +24,5 @@
 
 <div class="large-5 columns">
   <div class="histogram"></div>
+  <div class="sigmoidal"></div>
 </div>

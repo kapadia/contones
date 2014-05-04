@@ -30,19 +30,43 @@
           })
           .error(function(data, status, headers, config) {
             console.log('whoops');
-          })
+          });
       }
       
       
-      api.getRaster = function(deferred, filename, band, minimum, maximum) {
-        var url = ['', 'api', 'raster', filename, minimum, maximum];
-        url = url.filter(function(d) { return d !== undefined });
-        if (band > 0) { url.splice(4, 0, band); }
-        
+      api.setFile = function(deferred, filepath) {
+        var url = ['', 'api', 'raster', filepath];
+        console.log('setFile', url.join('/'));
+        $http.post(url.join('/'))
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data);
+          })
+          .error(function(data, status, headers, config) {
+            console.log('whoops');
+          });
+      }
+      
+      
+      api.getRaster = function(deferred, band, minimum, maximum) {
+        var url = ['', 'api', 'raster', band, minimum, maximum];
         var img = new Image();
-        img.onload = function() { deferred.resolve(img); }
+        img.onload = function() {
+          deferred.resolve(img);
+        }
         img.src = url.join('/');
       }
+      
+      
+      api.getSigmoidal = function(deferred, band, alpha, beta, minimum, maximum) {
+        
+        var url = ['', 'api', 'raster', 0, 'sigmoidal', alpha, beta, minimum, maximum];
+        var img = new Image();
+        img.onload = function() {
+          deferred.resolve(img);
+        }
+        img.src = url.join('/');
+      }
+      
       
       api.getColorRaster = function(deferred, filename, bands) {
         var url = ['', 'api', 'raster', filename, 'color'].concat(bands);

@@ -208,7 +208,6 @@ def get_color_composite(filepath, r, g, b):
             arr = np.dstack(
                 map(get_band, [r, g, b])
             )
-    print arr
     
     minimum, maximum = arr.min(), arr.max()
     output = scale_image(arr, float(minimum), float(maximum))
